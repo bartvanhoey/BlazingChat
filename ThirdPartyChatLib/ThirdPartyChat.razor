@@ -1,0 +1,52 @@
+@page "/chat"
+@page "/chat/{ToUserId:int}"
+
+@using BlazingChat.Shared
+
+<div class="col-12">
+    <p></p>
+</div>
+
+<div style="border:0px; height:90vh;">
+    <div class="panel panel-primary" style="height: 100%;">
+        <div class="panel-heading top-bar">
+            <div class="col-md-8 col-xs-8">
+                <h3 class="panel-title">
+                    @if (ToUser != null && (ToUser.FirstName != null || ToUser.LastName != null))
+                    {
+                        <b>@ToUser.FirstName<span> </span>@ToUser.LastName</b>
+                    }
+                </h3>
+            </div>
+        </div>
+
+        <div id="divMessageContainerBase" class="panel-body msg-container-base"></div>
+
+        <div class="panel-footer">
+            <div class="input-group" id="myForm">
+                <input id="txtMessageInput" class="form-control input-sm" placeholder="write your message here">
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public int ToUserId { get; set; } = 1;
+
+    private List<Contact> contacts = new List<Contact>();
+
+    public Contact ToUser { get; set; } = new Contact();
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        contacts.Add(new Contact(1, "Julius", "Caesar"));
+        contacts.Add(new Contact(2, "Daniel", "Tonini"));
+        contacts.Add(new Contact(3, "Gary", "Thomas"));
+        contacts.Add(new Contact(4, "Martin", "Smommer"));
+        contacts.Add(new Contact(5, "Howard", "Snyder"));
+
+        ToUser = contacts.FirstOrDefault(c => c.ContactId == ToUserId);
+
+    }
+}
