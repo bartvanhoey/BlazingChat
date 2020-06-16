@@ -21,12 +21,7 @@
     protected override async Task OnInitializedAsync()
     {
 
-        contacts.Add(new Contact(1, "Julius", "Caesar"));
-        contacts.Add(new Contact(2, "Daniel", "Tonini"));
-        contacts.Add(new Contact(3, "Gary", "Thomas"));
-        contacts.Add(new Contact(4, "Martin", "Smommer"));
-        contacts.Add(new Contact(5, "Howard", "Snyder"));
-
+        contacts = await Http.GetFromJsonAsync<List<Contact>>("users");
     }
 
 }
