@@ -21,7 +21,7 @@
     protected override async Task OnInitializedAsync()
     {
 
-        contacts = await Http.GetFromJsonAsync<List<Contact>>("users");
+        contacts = await Http.GetFromJsonAsync<List<Contact>>("api/users");
     }
 
 }

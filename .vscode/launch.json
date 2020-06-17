@@ -5,7 +5,7 @@
    "version": "0.2.0",
    "configurations": [
         {
-            "name": "Launch and Debug Hosted Blazor WebAssembly App",
+            "name": "server",
             "type": "blazorwasm",
             "request": "launch",
             "hosted": true,

@@ -1,5 +1,15 @@
 ﻿@page "/"
+@inherits ProfileBase
 
-<h1>Hello, world!</h1>
+<div class="col-12">
+    <input type="text" @bind-value="@Vm.FirstName" class="form-control" name="firstName" id="firstName" placeholder="first name">
+    <br>
+    <input type="text" @bind-value="@Vm.LastName"  class="form-control" name="lastName" id="lastName" placeholder="last name" >
+    <br>
+    <input type="text" @bind-value="@Vm.EmailAddress"  class="form-control" name="emailAddress" id="emailAddress" placeholder="email address" >
+    <br>
+    <button class="btn btn-primary" @onclick="UpdateProfileAsync" >Update Profile</button>
+    <button class="btn btn-primary" @onclick="GetProfileAsync">Get Profile</button>
+    <span>&nbsp;&nbsp;</span> @Vm.Message
+</div>
 
-Welcome to your new app.
