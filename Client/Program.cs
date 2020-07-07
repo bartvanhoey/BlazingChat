@@ -1,5 +1,4 @@
 using System;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,19 +10,18 @@ namespace BlazingChat.Client
   {
     public static async Task Main(string[] args)
     {
+
+
       var builder = WebAssemblyHostBuilder.CreateDefault(args);
       builder.RootComponents.Add<App>("app");
 
-      builder.Services.AddTransient(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+      var baseAddress = new Uri(builder.HostEnvironment.BaseAddress);
 
-      builder.Services.AddTransient<IProfileViewModel, ProfileViewModel>();
+      builder.Services.AddHttpClient<IProfileViewModel, ProfileViewModel>("BlazingChatProfileClient", client
+        => client.BaseAddress = baseAddress);
 
-      var host = builder.Build();
 
-      var profileViewModel = host.Services.GetRequiredService<IProfileViewModel>();
-      profileViewModel.GetProfile();
-
-      await host.RunAsync();
+      await builder.Build().RunAsync();
     }
   }
 }

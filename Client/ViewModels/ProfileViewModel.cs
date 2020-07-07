@@ -1,3 +1,5 @@
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 using BlazingChat.Shared.Models;
 
@@ -10,6 +12,28 @@ namespace BlazingChat.Client.ViewModels
     public string LastName { get; set; }
     public string EmailAddress { get; set; }
     public string Message { get; set; }
+    private readonly HttpClient httpClient;
+
+    public ProfileViewModel() { }
+
+    public ProfileViewModel(HttpClient http)
+    {
+      this.httpClient = http;
+    }
+
+    public async Task UpdateProfileAsync()
+    {
+      User user = this;
+      HttpResponseMessage httpResponseMessage = await httpClient.PutAsJsonAsync($"api/users/{10}", user);
+      this.Message = "Profile updated successfully";
+    }
+
+    public async Task GetProfileAsync()
+    {
+      User user = await httpClient.GetFromJsonAsync<User>($"api/users/{10}");
+      LoadCurrentObject(user);
+      this.Message = "Profile loaded successfully";
+    }
 
     public static implicit operator ProfileViewModel(User user)
     {
@@ -34,17 +58,12 @@ namespace BlazingChat.Client.ViewModels
       };
     }
 
-    public void UpdateProfile()
+    private void LoadCurrentObject(ProfileViewModel _)
     {
-    //   User user = Vm;
-    //   HttpResponseMessage httpResponseMessage = await HttpClient.PutAsJsonAsync($"api/users/{10}", user);
-      this.Message = "Profile updated successfully";
+      FirstName = _.FirstName;
+      LastName = _.LastName;
+      EmailAddress = _.EmailAddress;
     }
 
-    public void GetProfile()
-    {
-      //Vm = await HttpClient.GetFromJsonAsync<User>($"api/users/{10}");
-      this.Message = "Profile loaded successfully";
-    }
   }
 }
