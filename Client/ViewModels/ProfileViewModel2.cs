@@ -3,7 +3,7 @@ using BlazingChat.Shared.Models;
 
 namespace BlazingChat.Client.ViewModels
 {
-  public class ProfileViewModel : IProfileViewModel
+  public class ProfileViewModel2 : IProfileViewModel
   {
     public long UserId { get; set; }
     public string FirstName { get; set; }
@@ -11,9 +11,9 @@ namespace BlazingChat.Client.ViewModels
     public string EmailAddress { get; set; }
     public string Message { get; set; }
 
-    public static implicit operator ProfileViewModel(User user)
+    public static implicit operator ProfileViewModel2(User user)
     {
-      return new ProfileViewModel
+      return new ProfileViewModel2
       {
         FirstName = user.FirstName,
         LastName = user.LastName,
@@ -23,14 +23,14 @@ namespace BlazingChat.Client.ViewModels
     }
 
 
-    public static implicit operator User(ProfileViewModel profileViewModel)
+    public static implicit operator User(ProfileViewModel2 ProfileViewModel2)
     {
       return new User
       {
-        FirstName = profileViewModel.FirstName,
-        LastName = profileViewModel.LastName,
-        EmailAddress = profileViewModel.EmailAddress,
-        UserId = profileViewModel.UserId
+        FirstName = ProfileViewModel2.FirstName,
+        LastName = ProfileViewModel2.LastName,
+        EmailAddress = ProfileViewModel2.EmailAddress,
+        UserId = ProfileViewModel2.UserId
       };
     }
 
