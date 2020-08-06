@@ -1,27 +1,27 @@
 @page "/contacts"
-@using BlazingChat.Shared
-@inject HttpClient Http
+@inherits ContactsBase
 
 
-<h1>Contacts</h1>
+
+<h2><b>Contacts</b></h2>
+<hr />
 
 <div class="col-12">
-    @foreach (var contact in contacts)
+    <div class="col-12 row">
+        <input type="text" class="col-9 form-control" placeholder="search"/>
+        <span>&nbsp;</span><button class="btn btn-primary">Search</button>
+    </div>
+    <br />
+    
+    @if(Vm.Contacts != null && Vm.Contacts.Count() > 0)
     {
-        <a href="/chat/@contact.ContactId" class="list-group-item list-group-item-action flex-colum align-items-start"><span
-            span>@contact.FirstName </span><span>@contact.LastName</span>
-        </a>
+        @foreach (var contact in Vm.Contacts)
+        {
+            <a href="/chat/@contact.ContactId" class="list-group-item list-group-item-action flex-column align-items-start">
+                @contact.FirstName <span> </span> @contact.LastName
+            </a>
+        }
     }
 </div>
 
 
-@code {
-    private List<Contact> contacts = new List<Contact>();
-
-    protected override async Task OnInitializedAsync()
-    {
-
-        contacts = await Http.GetFromJsonAsync<List<Contact>>("api/users");
-    }
-
-}

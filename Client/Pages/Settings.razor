@@ -1,16 +1,18 @@
 ﻿@page "/settings"
+@inherits SettingsBase  
 
-<h1>Counter</h1>
 
-<p>Current count: @currentCount</p>
+<div class="col-12">
+    <input type="checkbox" @bind="@Vm.Notifications" id="chkNotification">
+    <label for="">Notification</label>
+</div>
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<div class="col-12">
+    <input type="checkbox" @bind="@Vm.DarkTheme" id="chkDarkTheme">
+    <label for="">Dark Theme</label>
+</div>
 
-@code {
-    private int currentCount = 0;
 
-    private void IncrementCount()
-    {
-        currentCount++;
-    }
-}
+<div class="col-12">
+    <button class="btn btn-primary" @onclick="Vm.SaveAsync">Save</button>
+</div>
