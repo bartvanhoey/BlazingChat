@@ -1,28 +1,84 @@
 @page "/contacts"
-@inherits ContactsBase
+@using BlazingChat.ViewModels
+@inject IContactsViewModel _contactsViewModel
+@inject NavigationManager _navigationManager
 
-
-
-<h2><b>Contacts</b></h2>
-<hr />
+<h2>
+    <b>Contacts</b>
+</h2>
+<hr/>
 
 <div class="col-12">
     <div class="col-12 row">
         <input type="text" class="col-9 form-control" placeholder="search"/>
         <span>&nbsp;</span><button class="btn btn-primary">Search</button>
     </div>
-    <br />
-    
-    @if(Vm.Contacts != null && Vm.Contacts.Count() > 0)
+    <br/>
+
+    @if (ListOfContacts != null)
     {
-        @foreach (var contact in Vm.Contacts)
-        {
-            <a href="/chat/@contact.ContactId" class="list-group-item list-group-item-action flex-column align-items-start">
-                @contact.FirstName <span> </span> @contact.LastName
-            </a>
-        }
+    @*     @foreach (var contact in ListOfContacts) *@
+    @*     { *@
+    @*         <a href="/chat/@contact.ContactId"  *@
+    @*             class="list-group-item list-group-item-action flex-column align-items-start bold-text"> *@
+    @*             @contact.FirstName <span> </span> @contact.LastName *@
+    @*         </a> *@
+    @*     } *@
+    @*      *@
+
+        <Virtualize ItemsProvider="LoadVisibleContactsOnly" Context="contact">
+            <ItemContent>
+                <div style="height: 50px;">
+                    <a href="/chat/@contact.ContactId"
+                       class="list-group-item list-group-item-action flex-column align-items-start bold-text">
+                        @contact.FirstName <span> </span> @contact.LastName
+                    </a>
+                </div>
+            </ItemContent>
+            <Placeholder>
+                <div style="height: 50px;">
+                    <p>Loading...</p>
+                </div>
+            </Placeholder>
+
+        </Virtualize>
     }
 </div>
 
+@code {
 
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthenticationState { get; set; }
 
+    public List<Contact> ListOfContacts { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationState;
+        var user = authState.User;
+
+        if (user.Identity!.IsAuthenticated)
+        {
+    // ListOfContacts = await _contactsViewModel.GetAllContacts();
+        }
+        else _navigationManager.NavigateTo("/");
+    }
+
+    private void NavigateToChat()
+    {
+        _navigationManager.NavigateTo("/chat");
+    }
+
+    private async ValueTask<ItemsProviderResult<Contact>> LoadVisibleContactsOnly(ItemsProviderRequest request)
+    {
+        Console.WriteLine($"startIndex: {request.StartIndex}");
+        Console.WriteLine($"count: {request.Count}");
+
+        await Task.Delay(500);
+
+        var visibleContactsOnly = await _contactsViewModel.GetVisibleContactsOnly(request.StartIndex, request.Count);
+
+        return new ItemsProviderResult<Contact>(visibleContactsOnly, 20000);
+    }
+
+}

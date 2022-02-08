@@ -1,10 +1,10 @@
 using BlazingChat.Shared.Models;
 
-namespace BlazingChat.Client.ViewModels
+namespace BlazingChat.ViewModels
 {
     public class Contact
     {
-      public int ContactId { get; set; }
+        public int ContactId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
 
@@ -18,13 +18,14 @@ namespace BlazingChat.Client.ViewModels
             this.LastName = lastName;
         }
 
-        public Contact(int contactId,string firstName, string lastName)
+        public Contact(int contactId, string firstName, string lastName)
         {
             this.ContactId = contactId;
             this.FirstName = firstName;
             this.LastName = lastName;
         }
 
+        //operators
         public static implicit operator Contact(User user)
         {
             return new Contact
@@ -42,6 +43,6 @@ namespace BlazingChat.Client.ViewModels
                 FirstName = contact.FirstName,
                 LastName = contact.LastName
             };
-        }  
+        }
     }
 }
