@@ -1,12 +1,30 @@
+@using Microsoft.AspNetCore.Components.WebAssembly.Services
+@inject Microsoft.AspNetCore.Components.WebAssembly.Services.LazyAssemblyLoader _assemblyLoader
+
 <CascadingAuthenticationState>
-    <Router AppAssembly="@typeof(Program).Assembly">
+    <Router AppAssembly="@typeof(Program).Assembly" AdditionalAssemblies="_lazyLoadedAssemblies" OnNavigateAsync="OnNavigation">
         <Found Context="routeData">
-            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)"/>
         </Found>
         <NotFound>
             <LayoutView Layout="@typeof(MainLayout)">
                 <p>Sorry, there's nothing at this address.</p>
             </LayoutView>
-        </NotFound> 
-    </Router>  
+        </NotFound>
+    </Router>
 </CascadingAuthenticationState>
+
+@code
+{
+    private readonly List<System.Reflection.Assembly> _lazyLoadedAssemblies = new();
+
+
+    private async Task OnNavigation(NavigationContext context)
+    {
+        if (context.Path == "settings")
+        {
+            var assemblies = await _assemblyLoader.LoadAssembliesAsync(new[] { "Radzen.Blazor.dll" });
+            _lazyLoadedAssemblies.AddRange(assemblies);
+        }
+    }
+}

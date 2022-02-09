@@ -4,17 +4,24 @@
 @inject ISettingsViewModel _settingsViewModel
 @inject NavigationManager _navigationManager
 
-<h2><b>Settings</b></h2> 
-<hr />
+<h2>
+    <b>Settings</b>
+</h2>
+<hr/>
 
 <div class="col-12">
-    <input type="checkbox" @bind="@_settingsViewModel.Notifications" id="chkNotification">
-    <label> Notification </label>    
-    <br>   
-
-    <input type="checkbox" @bind="@_settingsViewModel.DarkTheme" id="chkDarkTheme">
-    <label> Dark Theme </label>    
-    <br>
+    <div class="row">
+    @* <input type="checkbox" @bind="@_settingsViewModel.Notifications" id="chkNotification"> *@
+        <RadzenSwitch @bind-Value="@_settingsViewModel.Notifications" Style="margin-bottom: 20px"/>
+        <span>&nbsp;</span>
+        <label> Notification </label>    
+    </div>
+    <div class="row">
+    @* <input type="checkbox" @bind="@_settingsViewModel.DarkTheme" id="chkDarkTheme"> *@
+        <RadzenSwitch @bind-Value="@_settingsViewModel.DarkTheme" Style="margin-bottom: 20px"/>
+        <span>&nbsp;</span>
+        <label> Dark Theme </label>    
+    </div>
 </div>
 <div class="col-12">
     <button class="btn btn-primary" @onclick="_settingsViewModel.Save">Save</button>
@@ -24,12 +31,13 @@
 
     [CascadingParameter]
     public Task<AuthenticationState> authenticationState { get; set; }
-    protected override async Task OnInitializedAsync() 
+
+    protected override async Task OnInitializedAsync()
     {
-        var authState = await authenticationState;//_authenticationStateProvider.GetAuthenticationStateAsync();
+        var authState = await authenticationState; //_authenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
-        if(user.Identity.IsAuthenticated)
+        if (user.Identity.IsAuthenticated)
         {
             var claim = user.FindFirst(c => c.Type == ClaimTypes.NameIdentifier);
             _settingsViewModel.UserId = Convert.ToInt64(claim?.Value);
@@ -39,5 +47,6 @@
         {
             _navigationManager.NavigateTo("/");
         }
-    } 
+    }
+
 }
