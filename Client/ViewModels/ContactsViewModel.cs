@@ -43,10 +43,8 @@ namespace BlazingChat.ViewModels
             return Contacts;
         }
 
-        public Task<int> GetContactsCount()
-        {
-            throw new NotImplementedException();
-        }
+        public async Task<int> GetContactsCount() => await _httpClient.GetFromJsonAsync<int>($"user/getcontactscount");
+
 
         public Task<List<Contact>> GetVisibleContacts(int startIndex, int numberOfUsers)
         {

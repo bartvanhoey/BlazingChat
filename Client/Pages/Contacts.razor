@@ -17,31 +17,29 @@
 
     @if (ListOfContacts != null)
     {
-    @*     @foreach (var contact in ListOfContacts) *@
-    @*     { *@
-    @*         <a href="/chat/@contact.ContactId"  *@
-    @*             class="list-group-item list-group-item-action flex-column align-items-start bold-text"> *@
-    @*             @contact.FirstName <span> </span> @contact.LastName *@
-    @*         </a> *@
-    @*     } *@
-    @*      *@
+        @foreach (var contact in ListOfContacts)
+        {
+            <a href="/chat/@contact.ContactId"
+               class="list-group-item list-group-item-action flex-column align-items-start bold-text">
+                @contact.FirstName <span> </span> @contact.LastName
+            </a>
+        }
 
-        <Virtualize ItemsProvider="LoadVisibleContactsOnly" Context="contact">
-            <ItemContent>
-                <div style="height: 50px;">
-                    <a href="/chat/@contact.ContactId"
-                       class="list-group-item list-group-item-action flex-column align-items-start bold-text">
-                        @contact.FirstName <span> </span> @contact.LastName
-                    </a>
-                </div>
-            </ItemContent>
-            <Placeholder>
-                <div style="height: 50px;">
-                    <p>Loading...</p>
-                </div>
-            </Placeholder>
-
-        </Virtualize>
+    @*     <Virtualize ItemsProvider="LoadVisibleContactsOnly" Context="contact"> *@
+    @*         <ItemContent> *@
+    @*             <div style="height: 50px;"> *@
+    @*                 <a href="/chat/@contact.ContactId" *@
+    @*                    class="list-group-item list-group-item-action flex-column align-items-start bold-text"> *@
+    @*                     @contact.FirstName <span> </span> @contact.LastName *@
+    @*                 </a> *@
+    @*             </div> *@
+    @*         </ItemContent> *@
+    @*         <Placeholder> *@
+    @*             <div style="height: 50px;"> *@
+    @*                 <p>Loading...</p> *@
+    @*             </div> *@
+    @*         </Placeholder> *@
+    @*     </Virtualize> *@
     }
 </div>
 
@@ -51,23 +49,22 @@
     public Task<AuthenticationState> AuthenticationState { get; set; }
 
     public List<Contact> ListOfContacts { get; set; } = new();
+    public int ContactsCount { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationState;
         var user = authState.User;
 
-        if (user.Identity!.IsAuthenticated)
+        if (user.Identity is {IsAuthenticated: true })
         {
-    // ListOfContacts = await _contactsViewModel.GetAllContacts();
+            ListOfContacts = await _contactsViewModel.GetAllContacts();
+            ContactsCount = await _contactsViewModel.GetContactsCount();
         }
         else _navigationManager.NavigateTo("/");
     }
 
-    private void NavigateToChat()
-    {
-        _navigationManager.NavigateTo("/chat");
-    }
+    private void NavigateToChat() => _navigationManager.NavigateTo("/chat");
 
     private async ValueTask<ItemsProviderResult<Contact>> LoadVisibleContactsOnly(ItemsProviderRequest request)
     {
@@ -76,9 +73,12 @@
 
         await Task.Delay(500);
 
+
         var visibleContactsOnly = await _contactsViewModel.GetVisibleContactsOnly(request.StartIndex, request.Count);
 
-        return new ItemsProviderResult<Contact>(visibleContactsOnly, 20000);
+        return new ItemsProviderResult<Contact>(visibleContactsOnly, ContactsCount);
     }
+
+
 
 }

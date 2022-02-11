@@ -177,10 +177,10 @@ namespace BlazingChat.Server.Controllers
         [HttpGet("getallcontacts")]
         public List<User> GetAllContacts()
         {
-            List<User> users = new();
-            users.AddRange(Enumerable.Range(0, 20001).Select(x => new User { UserId = x, FirstName = $"First{x}", LastName = $"Last{x}"}));
-        
-            return users;
+            // List<User> users = new();
+            // users.AddRange(Enumerable.Range(0, 20001).Select(x => new User { UserId = x, FirstName = $"First{x}", LastName = $"Last{x}"}));
+            return  _context.Users.ToList();
+            // return users;
            
         }
 
@@ -192,6 +192,8 @@ namespace BlazingChat.Server.Controllers
 
             return users;   
         }
+        
+        
 
         [HttpGet("getcontactscount")]
         public async Task<int> GetContactsCount()
