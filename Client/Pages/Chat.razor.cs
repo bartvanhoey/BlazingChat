@@ -26,7 +26,7 @@ namespace BlazingChat.Client.Pages
         public string FromUserId { get; set; }
         public string MessageText { get; set; }
         public List<Message> Messages { get; set; } = new();
-        
+
         protected HubConnection HubConnection;
 
 
@@ -36,7 +36,7 @@ namespace BlazingChat.Client.Pages
 
             if (!claimsPrincipal.Identity!.IsAuthenticated) NavigationManager.NavigateTo("/");
 
-            FromUserId  = (await HttpClient.GetFromJsonAsync<User>("user/getcurrentuser"))?.UserId.ToString();
+            FromUserId = (await HttpClient.GetFromJsonAsync<User>("user/getcurrentuser"))?.UserId.ToString();
 
             if (long.Parse(ToUserId) > 0)
                 ToUser = await HttpClient.GetFromJsonAsync<User>($"user/getprofile/{ToUserId}");
@@ -46,19 +46,32 @@ namespace BlazingChat.Client.Pages
 
             HubConnection.On<Message>("ReceiveMessage", (message) =>
             {
-                Messages.Add(message);
-                StateHasChanged();
+                if (message.FromUserId == FromUserId ||
+                    message.ToUserId == FromUserId && message.FromUserId == ToUserId)
+                {
+                    Messages.Add(message);
+                    StateHasChanged();    
+                }
+
+
+                
             });
 
             await HubConnection.StartAsync();
-
         }
 
-        
+
         private async Task Send()
         {
             var message = new Message { ToUserId = ToUserId, FromUserId = FromUserId, MessageText = MessageText };
             await HubConnection.SendAsync("SendMessage", message);
+            MessageText = string.Empty;
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            var module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/site.js");
+            await module.InvokeVoidAsync("setScroll");
         }
     }
 }
