@@ -57,7 +57,8 @@ namespace BlazingChat.Server.Controllers
             //create claimsPrincipal
             var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
             //Sign In User
-            await HttpContext.SignInAsync(claimsPrincipal);
+            await HttpContext.SignInAsync(claimsPrincipal, GetAuthenticationProperties());
+            
             return await Task.FromResult(loggedInUser);
         }
 
@@ -142,21 +143,21 @@ namespace BlazingChat.Server.Controllers
         public async Task TwitterSignIn()
         {
             await HttpContext.ChallengeAsync(TwitterDefaults.AuthenticationScheme, 
-                new AuthenticationProperties { RedirectUri = "/profile" });
+                GetAuthenticationProperties());
         }
 
         [HttpGet("FacebookSignIn")]
         public async Task FacebookSignIn()
         {
             await HttpContext.ChallengeAsync(FacebookDefaults.AuthenticationScheme, 
-                new AuthenticationProperties { RedirectUri = "/profile" });
+                GetAuthenticationProperties());
         }
 
         [HttpGet("GoogleSignIn")]
         public async Task GoogleSignIn()
         {
             await HttpContext.ChallengeAsync(GoogleDefaults.AuthenticationScheme, 
-                new AuthenticationProperties { RedirectUri = "/profile" });
+                GetAuthenticationProperties());
         }
 
         [HttpGet("DownloadServerFile")]
@@ -173,39 +174,24 @@ namespace BlazingChat.Server.Controllers
                 return Convert.ToBase64String(buffer);
             }
         }
-        
-        [HttpGet("getallcontacts")]
-        public List<User> GetAllContacts()
+       
+        public AuthenticationProperties GetAuthenticationProperties()
         {
-            // List<User> users = new();
-            // users.AddRange(Enumerable.Range(0, 20001).Select(x => new User { UserId = x, FirstName = $"First{x}", LastName = $"Last{x}"}));
-            return  _context.Users.ToList();
-            // return users;
-           
-        }
-
-        [HttpGet("getonlyvisiblecontacts")]
-        public List<User> GetOnlyVisibleContacts(int startIndex, int count)
-        {
-            List<User> users = new();
-            users.AddRange(Enumerable.Range(startIndex, count).Select(x => new User { UserId = x, FirstName = $"First{x}", LastName = $"Last{x}"}));
-
-            return users;   
+            return new AuthenticationProperties()
+            {
+                IsPersistent = true,
+                ExpiresUtc = DateTime.Now.AddMinutes(10),
+                RedirectUri = "/profile"
+            };
         }
         
+        [HttpGet("notauthorized")]
+        public IActionResult NotAuthorized()
+        {
+            return Unauthorized();
+        }
+
         
-
-        [HttpGet("getcontactscount")]
-        public async Task<int> GetContactsCount()
-        {
-            return await _context.Users.CountAsync();
-        }
-
-        [HttpGet("getvisiblecontacts")]
-        public async Task<List<User>> GetVisibleContacts(int startIndex, int count)
-        {
-            return await _context.Users.Skip(startIndex).Take(count).ToListAsync();
-        }
     }
     
 }

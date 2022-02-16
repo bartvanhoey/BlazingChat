@@ -2,6 +2,7 @@
 @using BlazingChat.ViewModels
 @using BlazingChat.Shared.Models
 @using System.Security.Claims
+@using System.Net
 @inject IProfileViewModel _profileViewModel
 @inject NavigationManager _navigationManager
 @inject IJSRuntime jsRuntime
@@ -79,7 +80,19 @@
         {
             var claim = user.FindFirst(c => c.Type == ClaimTypes.NameIdentifier);
             _profileViewModel.UserId = Convert.ToInt64(claim?.Value) ;
-            await _profileViewModel.GetProfile();
+            try
+            {
+                await _profileViewModel.GetProfile();
+            }
+            catch (HttpRequestException httpRequestException)
+            {
+
+                if (httpRequestException.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    await _httpClient.GetAsync("user/logoutuser");
+                    _navigationManager.NavigateTo("/");        
+                }
+            }
         }
         else
         {

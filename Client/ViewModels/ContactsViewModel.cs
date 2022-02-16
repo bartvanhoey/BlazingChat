@@ -30,25 +30,28 @@ namespace BlazingChat.ViewModels
 
         public async Task<List<Contact>> GetAllContacts()
         {
-            var users = await _httpClient.GetFromJsonAsync<List<User>>("user/getallcontacts");
+            var users = await _httpClient.GetFromJsonAsync<List<User>>("contacts/getvisiblecontacts?startIndex=0&count=10");
             LoadCurrentObject(users);
             return Contacts;
 
         }
 
-        public async Task<List<Contact>> GetVisibleContactsOnly(int startIndex, int numberOfUsers)
+        // public async Task<List<Contact>> GetVisibleContactsOnly(int startIndex, int numberOfUsers)
+        // {
+        //     var users = await _httpClient.GetFromJsonAsync<List<User>>($"user/getonlyvisiblecontacts?startIndex={startIndex}&count={numberOfUsers}");
+        //     LoadCurrentObject(users);
+        //     return Contacts;
+        // }
+
+        public async Task<int> GetContactsCount() => await _httpClient.GetFromJsonAsync<int>($"contacts/getcontactscount");
+
+
+        public async Task<List<Contact>> GetVisibleContacts(int startIndex, int count)
         {
-            var users = await _httpClient.GetFromJsonAsync<List<User>>($"user/getonlyvisiblecontacts?startIndex={startIndex}&count={numberOfUsers}");
+            var users = await _httpClient.GetFromJsonAsync<List<User>>($"contacts/getvisiblecontacts?startIndex={startIndex}&count={count}");
+
             LoadCurrentObject(users);
             return Contacts;
-        }
-
-        public async Task<int> GetContactsCount() => await _httpClient.GetFromJsonAsync<int>($"user/getcontactscount");
-
-
-        public Task<List<Contact>> GetVisibleContacts(int startIndex, int numberOfUsers)
-        {
-            throw new NotImplementedException();
         }
 
         private void LoadCurrentObject(List<User> users)

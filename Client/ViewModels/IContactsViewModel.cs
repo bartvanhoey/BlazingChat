@@ -13,7 +13,7 @@ namespace BlazingChat.ViewModels
         public List<Contact> Contacts { get; set; }
         public Task GetContacts();
         public Task<List<Contact>> GetAllContacts();
-        public Task<List<Contact>> GetVisibleContactsOnly(int startIndex, int numberOfUsers);
+        // public Task<List<Contact>> GetVisibleContactsOnly(int startIndex, int numberOfUsers);
         public Task<int> GetContactsCount();
         public Task<List<Contact>> GetVisibleContacts(int startIndex, int numberOfUsers);
     }

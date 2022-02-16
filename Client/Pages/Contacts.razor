@@ -74,7 +74,7 @@
         await Task.Delay(500);
 
 
-        var visibleContactsOnly = await _contactsViewModel.GetVisibleContactsOnly(request.StartIndex, request.Count);
+        var visibleContactsOnly = await _contactsViewModel.GetVisibleContacts(request.StartIndex, request.Count);
 
         return new ItemsProviderResult<Contact>(visibleContactsOnly, ContactsCount);
     }

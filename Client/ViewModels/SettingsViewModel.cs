@@ -1,12 +1,10 @@
-using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text;
 using System.Threading.Tasks;
 using BlazingChat.Shared.Models;
+using BlazingChat.ViewModels;
 
-namespace BlazingChat.ViewModels
+namespace BlazingChat.Client.ViewModels
 {
     public class SettingsViewModel : ISettingsViewModel
     {
@@ -19,6 +17,7 @@ namespace BlazingChat.ViewModels
         //methods
         public SettingsViewModel()
         {
+            
         }
         public SettingsViewModel(HttpClient httpClient)
         {
@@ -26,19 +25,20 @@ namespace BlazingChat.ViewModels
         }
         public async Task GetProfile()
         {
-            User user = await _httpClient.GetFromJsonAsync<User>($"user/getprofile/{this.UserId}");
+            User user = await _httpClient.GetFromJsonAsync<User>($"user/getprofile/{UserId}");
             LoadCurrentObject(user);
         }
         public async Task Save()
         {
-            await _httpClient.GetFromJsonAsync<User>($"user/updatetheme?userId={this.UserId}&value={this.DarkTheme.ToString()}");
+            User user = this;
+            await _httpClient.PutAsJsonAsync($"settings/updatetheme/{this.UserId}", user);
 
-            await _httpClient.GetFromJsonAsync<User>($"user/updatenotifications?userId={this.UserId}&value={this.Notifications.ToString()}");
+            await _httpClient.PutAsJsonAsync($"settings/updatenotifications/{this.UserId}", user);
         }
         private void LoadCurrentObject(SettingsViewModel settingsViewModel)
         {
-            this.DarkTheme = settingsViewModel.DarkTheme;
-            this.Notifications = settingsViewModel.Notifications;
+            DarkTheme = settingsViewModel.DarkTheme;
+            Notifications = settingsViewModel.Notifications;
         }
 
         //operators
